@@ -1,0 +1,123 @@
+ create database ecommerce;
+ 
+ 
+ /* customers */
+
+
+crate table customers(
+    id int primary key auto_increment,
+    name varchar(255),
+    email varchar(255),
+    address varchar(255)
+    );
+
+    /*orders */
+
+    create table orders(
+        id int primary key auto_increment,
+        customer_id int,
+        order_date date,
+        total_amount decimal(10,2),
+        foreign key (customer_id) references customers(id)
+        );
+        /* products*/
+
+     create table products(  
+    id int primary key auto_increment,
+    name varchar(255),
+    price decimal(10,2),
+    description text
+    );
+
+
+    /* values into customer */
+     values into customers( id,name, email, address)
+     values (1,'John Doe', 'john@example.com', '123 Main St'),
+     (2,'Jane Smith', 'jane@example.com', '456 Elm St'),
+      (3,'Bob Johnson', 'bob@example.com', '789 Oak St'),
+      (4,'Alice Brown', 'alice@example.com', '321 Pine St'),
+      (5,'Charlie Davis', 'charlie@example.com', '654 Maple St');
+    
+
+
+
+     /* values into orders */
+     values into orders(id, customer_id, order_date, total_amount)
+     values (1, 1, '2023-05-01', 100.00),
+     (2, 2, '2023-05-02', 150.00),
+     (3, 3, '2023-05-03', 75.00),
+     (4, 1, '2023-05-04', 200.00),
+     (5, 2, '2023-05-05', 50.00);
+
+     /* values into products */
+     values into products(id, name, price, description)
+     (1, 'Product A', 10.00, 'Description for Product A'),
+     (2, 'Product B', 20.00, 'Description for Product B'),
+     (3, 'Product C', 15.00, 'Description for Product C'),
+     (4, 'Product D', 30.00, 'Description for Product D'),
+     (5, 'Product E', 25.00, 'Description for Product E');
+
+
+
+
+ /* Retrieve all customers who have placed an order in the last 30 days.*/
+  select * from customers where customer_id in (select customer_id from orders where order_date >= date_sub(now(), interval 30 day));
+
+   /* Get the total amount of all orders placed by each customer.*/
+   select customer_id, sum(total_amount) as total_amount from orders group by customer_id;
+
+   /*Update the price of Product C to 45.00.*/
+   select * from products where name = 'Product C'; 
+   update products set price = 45.00 where name = 'Product C';
+
+   /*Add a new column discount to the products table.*/
+   select * from products;
+   alter table products add column discount decimal(10,2);
+   select * from products;
+
+
+   /* Retrieve the top 3 products with the highest price.*/
+   select * from products order by price desc limit 3;  
+
+   /* Get the names of customers who have ordered Product A.*/
+   select customers.
+   name from customers where customer_id in (select customer_id from orders where product_id = (select id from products where name = 'Product A'));
+
+
+ /* Join the orders and customers tables to retrieve the customer's name and order date for each order.*/
+ select customers.name, orders.order_date from customers join orders on customers.id = orders.customer_id;
+
+ /*Retrieve the orders with a total amount greater than 150.00.*/
+ select * from orders where total_
+ amount > 150.00;
+
+ /* Normalize the database by creating a separate table for order items and updating the orders table to reference the order_items table.*/
+ create table order_items(
+    id int primary key auto_increment,
+    order_id int,
+    product_id int,
+    quantity int,
+    foreign key (order_id) references orders(id),
+    foreign key (product_id) references products(id)
+    );
+
+
+  /*Retrieve the average total of all orders.*/
+  select avg    (total_amount) from orders;     
+
+
+
+
+
+   
+
+
+   
+
+
+
+
+
+
+     
+
